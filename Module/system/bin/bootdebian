@@ -1,0 +1,26 @@
+#!/system/bin/sh
+
+PRECHROOT="/data/local/debian"
+
+# 1. Root Kontrolü
+if [ "$(id -u)" -ne 0 ]; then
+    echo "[-] Error: Please run this script via root acces!"
+    exit 1
+fi
+
+mountpoint -q $PRECHROOT/dev || mount -o bind /dev $PRECHROOT/dev
+mountpoint -q $PRECHROOT/dev/pts || mount -t devpts devpts $PRECHROOT/dev/pts
+mountpoint -q $PRECHROOT/dev/shm || mount -o rw,nosuid,nodev,mode=1777 -t tmpfs tmpfs $PRECHROOT/dev/shm
+mountpoint -q $PRECHROOT/proc || mount -t proc proc $PRECHROOT/proc
+mountpoint -q $PRECHROOT/sys || mount -t sysfs sys $PRECHROOT/sys
+mountpoint -q $PRECHROOT/sdcard || mount -o bind /sdcard $PRECHROOT/sdcard
+
+true > "$PRECHROOT/etc/resolv.conf"
+DNS1=$(getprop net.dns1)
+if [ -n "$DNS1" ]; then
+    echo "nameserver $DNS1" >> "$PRECHROOT/etc/resolv.conf"
+fi
+echo "nameserver 1.1.1.1" >> "$PRECHROOT/etc/resolv.conf"
+
+echo "[+] Entering Debian..."
+chroot $PRECHROOT /bin/bash -l

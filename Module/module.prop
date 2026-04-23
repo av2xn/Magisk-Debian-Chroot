@@ -1,0 +1,6 @@
+id=debian_chroot
+name=Debian ARM64 Chroot
+version=v1.0
+versionCode=1
+author=av2xn
+description=Debian on android!
