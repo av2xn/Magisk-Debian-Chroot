@@ -1,5 +1,4 @@
 #!/system/bin/sh
-
 PRECHROOT="/data/local/debian"
 
 if [ "$(id -u)" -ne 0 ]; then
